@@ -1,0 +1,73 @@
+# Credit Enroll Pro
+# Git Ignore File
+
+# Configuration files with credentials
+public_html/src/config.php
+
+# Image directory (logos, uploads, etc.)
+public_html/src/img/
+public_html/uploads/
+
+# Logs
+logs/
+public_html/logs/
+*.log
+
+# Setup completion marker
+setup/.setup_complete
+public_html/setup/.setup_complete
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PHP
+*.cache
+composer.phar
+vendor/
+
+# Backup files
+*.bak
+*.backup
+*_backup
+*.sql.gz
+*.sql.zip
+*.old
+
+# Agreement PDFs (if you don't want to commit them)
+# public_html/src/agreements/*.pdf
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node modules (if using any frontend tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Compiled assets
+public_html/assets/dist/
+
+# Test files (should not be in production)
+test.php
+public_html/test.php
+admin/test*.php
+public_html/admin/test*.php
+enroll/test*.php
+public_html/enroll/test*.php

@@ -1,0 +1,13 @@
+# Disable redirects for setup directory
+RewriteEngine Off
+
+# Allow access to setup files
+<Files "setup.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+<Files "database_schema.sql">
+    Order deny,allow
+    Deny from all
+</Files>
