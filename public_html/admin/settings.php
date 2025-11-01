@@ -161,6 +161,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $config['secret_key'] = trim($_POST['secret_key'] ?? '');
             } elseif ($service === 'systeme_io') {
                 $config['api_key'] = trim($_POST['api_key'] ?? '');
+            } elseif ($service === 'zapier') {
+                // Generate API key if not exists or regenerate requested
+                if (empty($existing['additional_config']) || isset($_POST['regenerate_key'])) {
+                    $config['api_key'] = 'zpk_' . bin2hex(random_bytes(32));
+                } else {
+                    $existing_config = json_decode($existing['additional_config'], true);
+                    $config['api_key'] = $existing_config['api_key'] ?? '';
+                }
+                $config['install_url'] = BASE_URL;
             }
 
             if ($existing) {
@@ -672,6 +681,7 @@ include __DIR__ . '/../src/header.php';
         <a href="?tab=plans" class="<?php echo $active_tab === 'plans' ? 'active' : ''; ?>">Plans</a>
         <a href="?tab=api" class="<?php echo $active_tab === 'api' ? 'active' : ''; ?>">API Keys</a>
         <a href="?tab=xactoauth" class="<?php echo $active_tab === 'xactoauth' ? 'active' : ''; ?>">XactoAuth</a>
+        <a href="?tab=zapier" class="<?php echo $active_tab === 'zapier' ? 'active' : ''; ?>">Zapier Settings</a>
         <a href="?tab=questions" class="<?php echo $active_tab === 'questions' ? 'active' : ''; ?>">Questions</a>
         <a href="?tab=contracts" class="<?php echo $active_tab === 'contracts' ? 'active' : ''; ?>">State Contracts</a>
         <a href="?tab=templates" class="<?php echo $active_tab === 'templates' ? 'active' : ''; ?>">Communication Templates</a>
@@ -1328,6 +1338,99 @@ include __DIR__ . '/../src/header.php';
             alert('Webhook secret copied to clipboard!');
         }
         </script>
+    <?php endif; ?>
+
+    <?php if ($active_tab === 'zapier'): ?>
+        <?php
+        $zapier_config = $api_keys['zapier'] ?? null;
+        $zapier_enabled = $zapier_config && $zapier_config['is_enabled'];
+        $zapier_data = $zapier_config ? json_decode($zapier_config['additional_config'], true) : [];
+        $zapier_api_key = $zapier_data['api_key'] ?? '';
+        ?>
+
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title" style="margin: 0;">Zapier Integration Settings</h2>
+                <span class="badge badge-<?php echo $zapier_enabled ? 'success' : 'danger'; ?>">
+                    <?php echo $zapier_enabled ? 'Enabled' : 'Disabled'; ?>
+                </span>
+            </div>
+
+            <div style="padding: var(--spacing-lg);">
+                <div class="alert alert-info" style="margin-bottom: var(--spacing-lg);">
+                    <strong>About Zapier Integration</strong>
+                    <p style="margin: 0.5rem 0 0 0;">
+                        Connect EnrollMagic to 5,000+ apps via Zapier. Use these credentials to authenticate
+                        your Zapier zaps and automate enrollment workflows.
+                    </p>
+                </div>
+
+                <form method="POST" action="?tab=zapier">
+                    <input type="hidden" name="save_api_key" value="1">
+                    <input type="hidden" name="service" value="zapier">
+
+                    <div class="form-group">
+                        <label><input type="checkbox" name="is_enabled" <?php echo $zapier_enabled ? 'checked' : ''; ?>> Enable Zapier Integration</label>
+                    </div>
+
+                    <h3 style="color: var(--color-primary); margin-top: var(--spacing-lg); margin-bottom: var(--spacing-md);">Connection Details</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Install URL</label>
+                        <div style="display: flex; gap: var(--spacing-sm);">
+                            <input type="text" class="form-control" id="zapier-install-url" readonly
+                                   value="<?php echo BASE_URL; ?>"
+                                   style="font-family: monospace; background: var(--color-light-1);">
+                            <button type="button" class="btn btn-secondary" onclick="copyToClipboard('zapier-install-url', this)">Copy</button>
+                        </div>
+                        <small style="color: #666; font-size: 13px; margin-top: 0.25rem; display: block;">
+                            Use this URL when setting up authentication in Zapier
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">API Key</label>
+                        <div style="display: flex; gap: var(--spacing-sm);">
+                            <input type="text" name="api_key" class="form-control" id="zapier-api-key" readonly
+                                   value="<?php echo htmlspecialchars($zapier_api_key); ?>"
+                                   style="font-family: monospace; background: var(--color-light-1);">
+                            <button type="button" class="btn btn-secondary" onclick="copyToClipboard('zapier-api-key', this)">Copy</button>
+                        </div>
+                        <small style="color: #666; font-size: 13px; margin-top: 0.25rem; display: block;">
+                            Use this API key to authenticate Zapier requests
+                        </small>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                        <?php if (empty($zapier_api_key)): ?>
+                            <button type="submit" name="regenerate_key" value="1" class="btn btn-secondary">Generate API Key</button>
+                        <?php else: ?>
+                            <button type="submit" name="regenerate_key" value="1" class="btn btn-danger"
+                                    onclick="return confirm('This will invalidate the current API key and break existing Zapier connections. Continue?');">
+                                Regenerate API Key
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </form>
+
+                <h3 style="color: var(--color-primary); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">Setup Instructions</h3>
+
+                <div style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 8px; padding: 1rem; margin-bottom: var(--spacing-md);">
+                    <p style="margin: 0 0 0.5rem 0; color: #075985; font-size: 14px; font-weight: 600;">
+                        How to connect EnrollMagic to Zapier:
+                    </p>
+                    <ol style="margin: 0.5rem 0 0 1.5rem; padding: 0; color: #075985; font-size: 13px; line-height: 1.6;">
+                        <li>Click "Generate API Key" above if you haven't already</li>
+                        <li>Click "Save Settings" to enable the integration</li>
+                        <li>Copy the Install URL and API Key</li>
+                        <li>In Zapier, create a new Zap and search for "EnrollMagic" (or use Webhooks)</li>
+                        <li>When prompted for authentication, paste the Install URL and API Key</li>
+                        <li>Test the connection and start automating!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
 
     <?php if ($active_tab === 'questions'): ?>
@@ -3917,6 +4020,32 @@ function togglePassword(button) {
         button.textContent = '👁️';
         button.title = 'Show';
     }
+}
+
+function copyToClipboard(elementId, buttonElement) {
+    const element = document.getElementById(elementId);
+    element.select();
+    element.setSelectionRange(0, 99999); // For mobile
+
+    navigator.clipboard.writeText(element.value).then(() => {
+        // Show success feedback
+        const originalText = buttonElement.textContent;
+        const originalBg = buttonElement.style.background;
+        const originalColor = buttonElement.style.color;
+
+        buttonElement.textContent = 'Copied!';
+        buttonElement.style.background = '#10b981';
+        buttonElement.style.color = 'white';
+
+        setTimeout(() => {
+            buttonElement.textContent = originalText;
+            buttonElement.style.background = originalBg;
+            buttonElement.style.color = originalColor;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard');
+    });
 }
 </script>
 

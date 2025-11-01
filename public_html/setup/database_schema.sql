@@ -373,6 +373,7 @@ CREATE TABLE IF NOT EXISTS id_docs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- API keys table
+-- Supported integrations: recaptcha, voipms, mailersend, credit_repair_cloud, zoho_books, systeme_io, xactoauth, zapier
 CREATE TABLE IF NOT EXISTS api_keys (
     id INT AUTO_INCREMENT PRIMARY KEY,
     service_name VARCHAR(100) UNIQUE NOT NULL,
