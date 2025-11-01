@@ -1360,7 +1360,7 @@ include __DIR__ . '/../src/header.php';
                 <div class="alert alert-info" style="margin-bottom: var(--spacing-lg);">
                     <strong>About Zapier Integration</strong>
                     <p style="margin: 0.5rem 0 0 0;">
-                        Connect EnrollMagic to 5,000+ apps via Zapier. Use these credentials to authenticate
+                        Connect Credit Enroll Pro to 5,000+ apps via Zapier. Use these credentials to authenticate
                         your Zapier zaps and automate enrollment workflows.
                     </p>
                 </div>
@@ -1373,6 +1373,16 @@ include __DIR__ . '/../src/header.php';
                         <label><input type="checkbox" name="is_enabled" <?php echo $zapier_enabled ? 'checked' : ''; ?>> Enable Zapier Integration</label>
                     </div>
 
+                    <?php if (!$zapier_enabled): ?>
+                        <div class="alert alert-warning" style="margin-top: var(--spacing-md);">
+                            <strong>Integration Disabled</strong>
+                            <p style="margin: 0.5rem 0 0 0;">
+                                Check "Enable Zapier Integration" and click "Generate API Key" below to get started.
+                            </p>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($zapier_enabled || !empty($zapier_api_key)): ?>
                     <h3 style="color: var(--color-primary); margin-top: var(--spacing-lg); margin-bottom: var(--spacing-md);">Connection Details</h3>
 
                     <div class="form-group">
@@ -1412,23 +1422,26 @@ include __DIR__ . '/../src/header.php';
                             </button>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </form>
 
+                <?php if ($zapier_enabled && !empty($zapier_api_key)): ?>
                 <h3 style="color: var(--color-primary); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">Setup Instructions</h3>
 
                 <div style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 8px; padding: 1rem; margin-bottom: var(--spacing-md);">
                     <p style="margin: 0 0 0.5rem 0; color: #075985; font-size: 14px; font-weight: 600;">
-                        How to connect EnrollMagic to Zapier:
+                        How to connect Credit Enroll Pro to Zapier:
                     </p>
                     <ol style="margin: 0.5rem 0 0 1.5rem; padding: 0; color: #075985; font-size: 13px; line-height: 1.6;">
                         <li>Click "Generate API Key" above if you haven't already</li>
                         <li>Click "Save Settings" to enable the integration</li>
                         <li>Copy the Install URL and API Key</li>
-                        <li>In Zapier, create a new Zap and search for "EnrollMagic" (or use Webhooks)</li>
+                        <li>In Zapier, create a new Zap and search for "Credit Enroll Pro" (or use Webhooks)</li>
                         <li>When prompted for authentication, paste the Install URL and API Key</li>
                         <li>Test the connection and start automating!</li>
                     </ol>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
