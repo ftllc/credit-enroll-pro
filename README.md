@@ -62,7 +62,12 @@ Credit Enroll Pro integrates seamlessly with industry-leading platforms:
 </td>
 <td width="33%" align="center">
 <h4>📧 Communications</h4>
-<p><strong>VoIP.ms</strong><br/>SMS notifications<br/>Two-factor authentication codes</p>
+<p>
+  <a href="https://voip.ms/en/invite/NDUxNjA1" target="_blank" rel="noopener noreferrer">
+    <strong>VoIP.ms</strong><br/></a>
+    SMS notifications<br/>
+    Two-factor authentication codes
+</p>
 <p><strong>MailerSend</strong><br/>Transactional emails<br/>Enrollment notifications</p>
 </td>
 <td width="33%" align="center">
