@@ -772,18 +772,7 @@ include __DIR__ . '/../src/header.php';
             </form>
         </div>
 
-        <div class="card" style="margin-top: var(--spacing-lg);">
-            <div class="card-header"><h2 class="card-title">XactoSign E-Signature Certificate</h2></div>
-            <div style="padding: var(--spacing-lg);">
-                <p style="color: #666; margin-bottom: var(--spacing-md);">
-                    Test the e-signature certificate generation system. This will create a sample certificate
-                    with test data to verify the certificate format and layout.
-                </p>
-                <a href="../src/xactosign_verify.php?mode=test" target="_blank" class="btn btn-primary">
-                    Generate Test Certificate
-                </a>
-            </div>
-        </div>
+        <?php if (function_exists('render_test_certificate_ui')) { render_test_certificate_ui(); } ?>
     <?php endif; ?>
 
     <?php if ($active_tab === 'plans'): ?>
